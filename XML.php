@@ -67,8 +67,50 @@ class XML
                                                     $writer->endElement();
                                                 $writer->endElement();
 
+        $writer->startElement('BILLER');
+            $writer->writeElement("Tax-No", "CHE-111.222.333 MWST");
+            $writer->writeElement("Doc-Reference", "CHE-111.222.333 MWST");
+            $writer->writeAttribute('Type', "ESR-ALT");
+                $writer->startElement('PARTY-ID');
+                    $writer->writeElement("Pid", "41010000001234567");
+                $writer->endElement();
+
+                    $writer->startElement('NAME-ADDRESS');
+                    $writer->writeAttribute('Format', "COM");
+                        $writer->startElement('NAME-ADDRESS');
+                            $writer->writeElement("Line-35", "Adam Adler");
+                            $writer->writeElement("Line-35", "Bahnhofstrasse 1");
+                            $writer->writeElement("Line-35", "8000 Zürich");
+                            $writer->writeElement("Line-35", "");
+                            $writer->writeElement("Line-35", "");
                         $writer->endElement();
                     $writer->endElement();
+                        $writer->startElement('STREET');
+                        $writer->endElement();
+                            $writer->startElement('STREET');
+                                $writer->writeElement("Line-35", "");
+                                $writer->writeElement("Line-35", "");
+                                $writer->writeElement("Line-35", "");
+                            $writer->endElement();
+                            $writer->startElement('City');
+                            $writer->endElement();
+                            $writer->startElement('State');
+                            $writer->endElement();
+                            $writer->startElement('Zip');
+                            $writer->endElement();
+                            $writer->startElement('Country');
+                            $writer->endElement();
+                        $writer->endElement();
+                            $writer->startElement('BANK-INFO');
+                                $writer->writeElement("ACCT-No", "");
+                                $writer->writeElement("ACCT-Name", "");
+                                $writer->writeElement("BankId", "001996");
+                                $writer->writeAttribute('Type', "BCNr-nat");
+                                $writer->writeAttribute('Country', "CH");
+                            $writer->endElement();
+                        $writer->endElement();
+
+
                 $writer->endElement();
             $writer->endElement();
         $writer->endElement();
