@@ -111,6 +111,42 @@ class XML
                         $writer->endElement();
 
 
+        $writer->startElement('PAYER');
+        $writer->startElement('PARTY-ID');
+        $writer->writeElement("Pid", "41301000000012497");
+        $writer->endElement();
+
+        $writer->startElement('NAME-ADDRESS');
+        $writer->writeAttribute('Format', "COM");
+        $writer->startElement('NAME-ADDRESS');
+        $writer->writeElement("Line-35", "Autoleasing AG");
+        $writer->writeElement("Line-35", "Gewerbestrasse 100");
+        $writer->writeElement("Line-35", "5000 Aarau");
+        $writer->writeElement("Line-35", "");
+        $writer->writeElement("Line-35", "");
+        $writer->endElement();
+        $writer->endElement();
+        $writer->startElement('STREET');
+        $writer->endElement();
+        $writer->startElement('STREET');
+        $writer->writeElement("Line-35", "");
+        $writer->writeElement("Line-35", "");
+        $writer->writeElement("Line-35", "");
+        $writer->endElement();
+        $writer->startElement('City');
+        $writer->endElement();
+        $writer->startElement('State');
+        $writer->endElement();
+        $writer->startElement('Zip');
+        $writer->endElement();
+        $writer->startElement('Country');
+        $writer->endElement();
+        $writer->endElement();
+        $writer->endElement();
+        $writer->endElement();
+        $writer->endElement();
+        $writer->endElement();
+
                 $writer->endElement();
             $writer->endElement();
         $writer->endElement();
