@@ -1,4 +1,8 @@
+
 <?php
+
+include 'TextFile.php';
+include 'XML.php';
 class FTP {
     var $ftp_server = "ftp.haraldmueller.ch";
     var $ftp_conn;
@@ -40,7 +44,16 @@ $local_file = "local.data";
 $server_file = "/out/AP21aZollinger/rechnung21003.data";
 $test_file = "/out/AP21aZollinger/test.data";
 
+$x = new XML();
+
+$x->writeXML();
+
+$t = new TextFile("24234");
+$t->writeBill();
+
+
 $f = new FTP();
-$f->getFile();
+$f->getFiles();
 $f->closeConnection();
+
 ?>
