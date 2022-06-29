@@ -28,7 +28,6 @@ class XML
                                     $writer->startElement('Canellation-Flag');
                                     $writer->endElement();
                                 $writer->endElement();
-                            $writer->endElement();
                                 $writer->startElement('MESSAGE-REFERENCE');
                                     $writer->startElement('REFERENCE-DATE');
                                     $writer->writeElement("Reference-NO", "202107164522001");
