@@ -16,7 +16,7 @@ class XML
         $writer->setIndentString('  ');
         $writer->setIndent(true);
 
-        $writer->startDocument( '1.0', 'UTF-8' );
+        $writer->startDocument( );
         $writer->startElement('XML-FSCM-INVOICE-2003A');
             $writer->startElement('INTERCHANGE');
                 $writer->startElement('IC-SENDER');
@@ -38,23 +38,23 @@ class XML
                                 $writer->startElement('MESSAGE-REFERENCE');
                                     $writer->startElement('REFERENCE-DATE');
                                     $writer->writeElement("Reference-NO", "$timeStamp");
-                                    $writer->writeElement("Date", $date->format("Ymd". "\n"));
+                                    $writer->writeElement("Date", $date->format("Ymd"));
                                 $writer->endElement();
                             $writer->endElement();
                                 $writer->startElement('PRINT-DATE');
-                                    $writer->writeElement("Date", $date->format("Ymd". "\n"));
+                                    $writer->writeElement("Date", $date->format("Ymd"));
                                 $writer->endElement();
                                     $writer->startElement('REFERENCE');
                                         $writer->startElement('INVOICE-REFERENCE');
                                             $writer->startElement('REFERENCE-DATE');
                                                 $writer->writeElement("Reference-NO", "$paymentNumber");
-                                                $writer->writeElement("Date", $date->format("Ymd". "\n")); //date = 20210731
+                                                $writer->writeElement("Date", $date->format("Ymd")); //date = 20210731
                                             $writer->endElement();
                                         $writer->endElement();
                                             $writer->startElement('ORDER');
                                                 $writer->startElement('REFERENCE-DATE');
                                                     $writer->writeElement("Reference-No", "$referenceNumber"); //A003
-                                                    $writer->writeElement("Date", $date->format("Ymd". "\n"));
+                                                    $writer->writeElement("Date", $date->format("Ymd"));
                                                 $writer->endElement();
                                             $writer->endElement();
                                                 $writer->startElement('REMINDER');
@@ -68,7 +68,7 @@ class XML
                                                     $writer->writeAttribute('Type', "ADE");
                                                         $writer->startElement('REFERENCE-DATE');
                                                             $writer->writeElement("Reference-No", "$timeStamp");
-                                                            $writer->writeElement("Date", $date->format("Ymd". "\n"));
+                                                            $writer->writeElement("Date", $date->format("Ymd"));
                                                         $writer->endElement();
                                                     $writer->endElement();
                                                 $writer->endElement();
@@ -83,13 +83,12 @@ class XML
 
                     $writer->startElement('NAME-ADDRESS');
                     $writer->writeAttribute('Format', "COM");
-                        $writer->startElement('NAME-ADDRESS');
+                        $writer->startElement('NAMES');
                             $writer->writeElement("Line-35", "$senderName");
                             $writer->writeElement("Line-35", "$senderAdress");
                             $writer->writeElement("Line-35", "$senderZIPLocation");
                             $writer->writeElement("Line-35", "");
                             $writer->writeElement("Line-35", "");
-                        $writer->endElement();
                     $writer->endElement();
                         $writer->startElement('STREET');
                         $writer->endElement();
@@ -107,9 +106,10 @@ class XML
                             $writer->startElement('Country');
                             $writer->endElement();
                         $writer->endElement();
+                        $writer->endElement();
                             $writer->startElement('BANK-INFO');
-                                $writer->writeElement("ACCT-No", "");
-                                $writer->writeElement("ACCT-Name", "");
+                                $writer->writeElement("Acct-No", "");
+                                $writer->writeElement("Acct-Name", "");
                                 $writer->writeElement("BankId", "001996");
                                 $writer->writeAttribute('Type', "BCNr-nat");
                                 $writer->writeAttribute('Country', "CH");
@@ -124,13 +124,12 @@ class XML
 
         $writer->startElement('NAME-ADDRESS');
         $writer->writeAttribute('Format', "COM");
-        $writer->startElement('NAME-ADDRESS');
+        $writer->startElement('NAME');
         $writer->writeElement("Line-35", "$receiverName");
         $writer->writeElement("Line-35", "$receiverAddress");
         $writer->writeElement("Line-35", "$receiverZIPLocation");
         $writer->writeElement("Line-35", "");
         $writer->writeElement("Line-35", "");
-        $writer->endElement();
         $writer->endElement();
         $writer->startElement('STREET');
         $writer->endElement();
@@ -146,6 +145,7 @@ class XML
         $writer->startElement('Zip');
         $writer->endElement();
         $writer->startElement('Country');
+        $writer->endElement();
         $writer->endElement();
         $writer->endElement();
         $writer->endElement();
