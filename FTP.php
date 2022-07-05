@@ -46,7 +46,9 @@ $test_file = "/out/AP21aZollinger/test.data";
 
 $x = new XML();
 
-$x->writeXML();
+$x->writeXML("234234", "41010000001234567", "41301000000012497", "2021-03-14", "A003",
+"CHE-111.222.333", "Adam Adler", "Bahnhofstrasse 1", "8000 Zuerich", "Autoleasing AG",
+"Gewerbestrasse 100", "5000 Aarau", "0000135000", "40");
 
 $t = new TextFile("24234");
 $t->writeBill();

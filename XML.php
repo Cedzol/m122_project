@@ -2,9 +2,16 @@
 
 class XML
 {
-    public function writeXML(){
+    public function writeXML($paymentNumber, $senderPID, $receiverPID, $date, $referenceNumber, $CHE, $senderName, $senderAdress, $senderZIPLocation,
+    $receiverName, $receiverAddress, $receiverZIPLocation, $overallPayment, $days){
+        $date = new DateTime($date);
+        $date->format("U");
+        $timeStamp = date_create();
+        $dateUntil = new DateTime(date("Y-m-d", $date->getTimestamp()));
+        $dateUntil->add(new DateInterval("P".$days."D"));
+        $timeStamp = date_timestamp_get($timeStamp);
         $writer = new XMLWriter();
-        $writer->openUri('result.xml');
+        $writer->openUri('rechnung' . $paymentNumber . '.xml');
 
         $writer->setIndentString('  ');
         $writer->setIndent(true);
@@ -13,10 +20,10 @@ class XML
         $writer->startElement('XML-FSCM-INVOICE-2003A');
             $writer->startElement('INTERCHANGE');
                 $writer->startElement('IC-SENDER');
-                    $writer->writeElement('Pid', "41010000001234567");
+                    $writer->writeElement('Pid', "$senderPID");
                 $writer->endElement();
                     $writer->startElement('IC-RECEIVER');
-                        $writer->writeElement('Pid', "41301000000012497");
+                        $writer->writeElement('Pid', "$receiverPID");
                 $writer->endElement();
                 $writer->startElement("IR-Ref");
                 $writer->endElement();
@@ -30,24 +37,24 @@ class XML
                                 $writer->endElement();
                                 $writer->startElement('MESSAGE-REFERENCE');
                                     $writer->startElement('REFERENCE-DATE');
-                                    $writer->writeElement("Reference-NO", "202107164522001");
-                                    $writer->writeElement("Date", "20210731");
+                                    $writer->writeElement("Reference-NO", "$timeStamp");
+                                    $writer->writeElement("Date", $date->format("Ymd". "\n"));
                                 $writer->endElement();
                             $writer->endElement();
                                 $writer->startElement('PRINT-DATE');
-                                    $writer->writeElement("Date", "20210731");
+                                    $writer->writeElement("Date", $date->format("Ymd". "\n"));
                                 $writer->endElement();
                                     $writer->startElement('REFERENCE');
                                         $writer->startElement('INVOICE-REFERENCE');
                                             $writer->startElement('REFERENCE-DATE');
-                                                $writer->writeElement("Reference-NO", "202107164522001");
-                                                $writer->writeElement("Date", "20210731");
+                                                $writer->writeElement("Reference-NO", "$paymentNumber");
+                                                $writer->writeElement("Date", $date->format("Ymd". "\n")); //date = 20210731
                                             $writer->endElement();
                                         $writer->endElement();
                                             $writer->startElement('ORDER');
                                                 $writer->startElement('REFERENCE-DATE');
-                                                    $writer->writeElement("Reference-No", "A003");
-                                                    $writer->writeElement("Date", "20210731");
+                                                    $writer->writeElement("Reference-No", "$referenceNumber"); //A003
+                                                    $writer->writeElement("Date", $date->format("Ymd". "\n"));
                                                 $writer->endElement();
                                             $writer->endElement();
                                                 $writer->startElement('REMINDER');
@@ -60,26 +67,26 @@ class XML
                                                     $writer->startElement('OTHER-REFERENCE');
                                                     $writer->writeAttribute('Type', "ADE");
                                                         $writer->startElement('REFERENCE-DATE');
-                                                            $writer->writeElement("Reference-No", "202107164522001");
-                                                            $writer->writeElement("Date", "20210731");
+                                                            $writer->writeElement("Reference-No", "$timeStamp");
+                                                            $writer->writeElement("Date", $date->format("Ymd". "\n"));
                                                         $writer->endElement();
                                                     $writer->endElement();
                                                 $writer->endElement();
 
         $writer->startElement('BILLER');
-            $writer->writeElement("Tax-No", "CHE-111.222.333 MWST");
-            $writer->writeElement("Doc-Reference", "CHE-111.222.333 MWST");
+            $writer->writeElement("Tax-No", "$CHE MWST");
+            $writer->writeElement("Doc-Reference", "$CHE MWST");
             $writer->writeAttribute('Type', "ESR-ALT");
                 $writer->startElement('PARTY-ID');
-                    $writer->writeElement("Pid", "41010000001234567");
+                    $writer->writeElement("Pid", "$senderPID");
                 $writer->endElement();
 
                     $writer->startElement('NAME-ADDRESS');
                     $writer->writeAttribute('Format', "COM");
                         $writer->startElement('NAME-ADDRESS');
-                            $writer->writeElement("Line-35", "Adam Adler");
-                            $writer->writeElement("Line-35", "Bahnhofstrasse 1");
-                            $writer->writeElement("Line-35", "8000 Zürich");
+                            $writer->writeElement("Line-35", "$senderName");
+                            $writer->writeElement("Line-35", "$senderAdress");
+                            $writer->writeElement("Line-35", "$senderZIPLocation");
                             $writer->writeElement("Line-35", "");
                             $writer->writeElement("Line-35", "");
                         $writer->endElement();
@@ -112,15 +119,15 @@ class XML
 
         $writer->startElement('PAYER');
         $writer->startElement('PARTY-ID');
-        $writer->writeElement("Pid", "41301000000012497");
+        $writer->writeElement("Pid", "$receiverPID");
         $writer->endElement();
 
         $writer->startElement('NAME-ADDRESS');
         $writer->writeAttribute('Format', "COM");
         $writer->startElement('NAME-ADDRESS');
-        $writer->writeElement("Line-35", "Autoleasing AG");
-        $writer->writeElement("Line-35", "Gewerbestrasse 100");
-        $writer->writeElement("Line-35", "5000 Aarau");
+        $writer->writeElement("Line-35", "$receiverName");
+        $writer->writeElement("Line-35", "$receiverAddress");
+        $writer->writeElement("Line-35", "$receiverZIPLocation");
         $writer->writeElement("Line-35", "");
         $writer->writeElement("Line-35", "");
         $writer->endElement();
@@ -143,7 +150,61 @@ class XML
         $writer->endElement();
         $writer->endElement();
         $writer->endElement();
+        $writer->startElement('LINE-ITEM');
         $writer->endElement();
+        $writer->startElement('SUMMARY');
+            $writer->startElement('INVOICE-AMOUNT');
+                $writer->writeElement('Amount', "$overallPayment"); //0000135000 = 1350.00
+            $writer->endElement();
+                $writer->startElement('VAT-AMOUNT');
+                    $writer->writeElement('Amount', '');
+                $writer->endElement();
+                    $writer->startElement('DEPOSIT-AMOUNT');
+                    $writer->writeElement('Amount', '');
+                        $writer->startElement('REFERENCE-DATE');
+                            $writer->writeElement('Reference-No', '');
+                            $writer->writeElement('Date', '');
+        $writer->endElement();
+        $writer->endElement();
+            $writer->startElement('EXTENED-AMOUNT');
+            $writer->writeAttribute('Type', '79');
+                $writer->writeElement('Amount', '');
+        $writer->endElement();
+            $writer->startElement('TAX');
+                $writer->startElement('TAX-BASIS');
+                $writer->writeElement('Amount', '');
+            $writer->endElement();
+            $writer->writeElement('Rate', '0');
+            $writer->writeAttribute("Categorie", "S");
+            $writer->writeElement('Amount', '');
+            $writer->endElement();
+                $writer->startElement('PAYMENT-TERMS');
+                    $writer->startElement('BASIC');
+                    $writer->writeAttribute("Payment-Type", "ESR");
+                    $writer->writeAttribute("TERMS-Type", "1");
+                    $writer->startElement('TERMS');
+                        $writer->writeElement('Payment-Period', "$days");
+                        $writer->writeAttribute("Type", "M");
+                        $writer->writeAttribute("On-OrAfter", "1");
+                        $writer->writeAttribute("Reference-Day", "31");
+                        $writer->writeElement("Date", $dateUntil->format('Ymd'));
+                    $writer->endElement();
+                $writer->endElement();
+        $writer->startElement('DISCOUNT');
+        $writer->writeAttribute("Terms-Type", "22");
+        $writer->writeElement("Disccount-Percentage", "0.0");
+        $writer->startElement('TERMS');
+        $writer->writeElement('Payment-Period', "$days");
+        $writer->writeAttribute("Type", "M");
+        $writer->writeAttribute("On-OrAfter", "1");
+        $writer->writeAttribute("Reference-Day", "31");
+        $writer->writeElement("Date", "");
+        $writer->endElement();
+        $writer->writeElement("Back-Pack-Container", "Base64");
+        $writer->endElement();
+        $writer->endElement();
+        $writer->endElement();
+
         $writer->endElement();
 
                 $writer->endElement();
@@ -156,153 +217,4 @@ class XML
 ?>
 
 
-<XML-FSCM-INVOICE-2003A>
-    <INTERCHANGE>
-        <IC-SENDER>
-            <Pid>41010000001234567</Pid>
-        </IC-SENDER>
-        <IC-RECEIVER>
-            <Pid>41301000000012497</Pid>
-        </IC-RECEIVER>
-        <IR-Ref />
-    </INTERCHANGE>
-    <INVOICE>
-        <HEADER>
-            <FUNCTION-FLAGS>
-                <Confirmation-Flag />
-                <Canellation-Flag />
-            </FUNCTION-FLAGS>
-            <MESSAGE-REFERENCE>
-                <REFERENCE-DATE>
-                    <Reference-No>202107164522001</Reference-No>
-                    <Date>20210731</Date>
-                </REFERENCE-DATE>
-            </MESSAGE-REFERENCE>
-            <PRINT-DATE>
-                <Date>20210731</Date>
-            </PRINT-DATE>
-            <REFERENCE>
-                <INVOICE-REFERENCE>
-                    <REFERENCE-DATE>
-                        <Reference-No>21003</Reference-No>
-                        <Date>20210731</Date>
-                    </REFERENCE-DATE>
-                </INVOICE-REFERENCE>
-                <ORDER>
-                    <REFERENCE-DATE>
-                        <Reference-No>A003</Reference-No>
-                        <Date>20210731</Date>
-                    </REFERENCE-DATE>
-                </ORDER>
-                <REMINDER Which="MAH">
-                    <REFERENCE-DATE>
-                        <Reference-No></Reference-No>
-                        <Date></Date>
-                    </REFERENCE-DATE>
-                </REMINDER>
-                <OTHER-REFERENCE Type="ADE">
-                    <REFERENCE-DATE>
-                        <Reference-No>202107164522001</Reference-No>
-                        <Date>20210731</Date>
-                    </REFERENCE-DATE>
-                </OTHER-REFERENCE>
-            </REFERENCE>
-            <BILLER>
-                <Tax-No>CHE-111.222.333 MWST</Tax-No>
-                <Doc-Reference Type="ESR-ALT "></Doc-Reference>
-                <PARTY-ID>
-                    <Pid>41010000001234567</Pid>
-                </PARTY-ID>
-                <NAME-ADDRESS Format="COM">
-                    <NAME>
-                        <Line-35>Adam Adler</Line-35>
-                        <Line-35>Bahnhofstrasse 1</Line-35>
-                        <Line-35>8000 Zürich</Line-35>
-                        <Line-35></Line-35>
-                        <Line-35></Line-35>
-                    </NAME>
-                    <STREET>
-                        <Line-35></Line-35>
-                        <Line-35></Line-35>
-                        <Line-35></Line-35>
-                    </STREET>
-                    <City></City>
-                    <State></State>
-                    <Zip></Zip>
-                    <Country></Country>
-                </NAME-ADDRESS>
-                <BANK-INFO>
-                    <Acct-No></Acct-No>
-                    <Acct-Name></Acct-Name>
-                    <BankId Type="BCNr-nat" Country="CH">001996</BankId>
-                </BANK-INFO>
-            </BILLER>
-            <PAYER>
-                <PARTY-ID>
-                    <Pid>41301000000012497</Pid>
-                </PARTY-ID>
-                <NAME-ADDRESS Format="COM">
-                    <NAME>
-                        <Line-35>Autoleasing AG</Line-35>
-                        <Line-35>Gewerbestrasse 100</Line-35>
-                        <Line-35>5000 Aarau</Line-35>
-                        <Line-35></Line-35>
-                        <Line-35></Line-35>
-                    </NAME>
-                    <STREET>
-                        <Line-35></Line-35>
-                        <Line-35></Line-35>
-                        <Line-35></Line-35>
-                    </STREET>
-                    <City></City>
-                    <State></State>
-                    <Zip></Zip>
-                    <Country></Country>
-                </NAME-ADDRESS>
-            </PAYER>
-        </HEADER>
-        <LINE-ITEM />
-        <SUMMARY>
-            <INVOICE-AMOUNT>
-                <Amount>0000135000</Amount>
-            </INVOICE-AMOUNT>
-            <VAT-AMOUNT>
-                <Amount></Amount>
-            </VAT-AMOUNT>
-            <DEPOSIT-AMOUNT>
-                <Amount></Amount>
-                <REFERENCE-DATE>
-                    <Reference-No></Reference-No>
-                    <Date></Date>
-                </REFERENCE-DATE>
-            </DEPOSIT-AMOUNT>
-            <EXTENDED-AMOUNT Type="79">
-                <Amount></Amount>
-            </EXTENDED-AMOUNT>
-            <TAX>
-                <TAX-BASIS>
-                    <Amount></Amount>
-                </TAX-BASIS>
-                <Rate Categorie="S">0</Rate>
-                <Amount></Amount>
-            </TAX>
-            <PAYMENT-TERMS>
-                <BASIC Payment-Type="ESR" Terms-Type="1">
-                    <TERMS>
-                        <Payment-Period Type="M" On-Or-After="1" Reference-Day="31">30</Payment-Period>
-                        <Date>20210830</Date>
-                    </TERMS>
-                </BASIC>
-                <DISCOUNT Terms-Type="22">
-                    <Discount-Percentage>0.0</Discount-Percentage>
-                    <TERMS>
-                        <Payment-Period Type="M" On-Or-After="1" Reference-Day="31"></Payment-Period>
-                        <Date></Date>
-                    </TERMS>
-                    <Back-Pack-Container Encode="Base64"> </Back-Pack-Container>
-                </DISCOUNT>
-            </PAYMENT-TERMS>
-        </SUMMARY>
-    </INVOICE>
-</XML-FSCM-INVOICE-2003A>
 
